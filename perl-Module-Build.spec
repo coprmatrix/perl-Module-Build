@@ -1,7 +1,7 @@
 #
-# spec file for package perl-Module-Build
+# spec file for package perl-Module-Build (Version 0.423400)
 #
-# Copyright (c) 2024 SUSE LLC
+# Copyright (c) 125 SUSE LLC
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -15,21 +15,20 @@
 # Please submit bugfixes or comments via https://bugs.opensuse.org/
 #
 
-
 %define cpan_name Module-Build
 Name:           perl-Module-Build
 Version:        0.423400
 Release:        0
 %define cpan_version 0.4234
-Provides:       perl(Module::Build) = 0.423400
-License:        Artistic-1.0 OR GPL-1.0-or-later
+Provides:  perl(Module::Build) = 0.423400
+License:   Artistic-1.0 or GPL-1.0-or-later
 Summary:        Build and install Perl modules
-URL:            https://metacpan.org/release/%{cpan_name}
-Source0:        https://cpan.metacpan.org/authors/id/L/LE/LEONT/%{cpan_name}-%{cpan_version}.tar.gz
-Source1:        cpanspec.yml
+Url:            https://metacpan.org/release/%{cpan_name}
+Source0:         https://cpan.metacpan.org/authors/id/L/LE/LEONT/%{cpan_name}-%{cpan_version}.tar.gz
+Source1:     cpanspec.yml
 BuildArch:      noarch
-BuildRequires:  perl
-BuildRequires:  perl-macros
+BuildRequires:  perl-macros-suse
+BuildRequires:  perl-generators
 BuildRequires:  perl(CPAN::Meta) >= 2.142060
 BuildRequires:  perl(CPAN::Meta::YAML) >= 0.003
 BuildRequires:  perl(ExtUtils::CBuilder) >= 0.27
@@ -39,6 +38,7 @@ BuildRequires:  perl(Parse::CPAN::Meta) >= 1.4401
 BuildRequires:  perl(Perl::OSType) >= 1
 BuildRequires:  perl(TAP::Harness) >= 3.29
 BuildRequires:  perl(version) >= 0.87
+BuildRequires:  perl-core
 Requires:       perl(CPAN::Meta) >= 2.142060
 Requires:       perl(ExtUtils::CBuilder) >= 0.27
 Requires:       perl(ExtUtils::ParseXS) >= 2.21
@@ -47,7 +47,7 @@ Requires:       perl(Perl::OSType) >= 1
 Requires:       perl(TAP::Harness) >= 3.29
 Requires:       perl(version) >= 0.87
 Recommends:     perl(ExtUtils::Manifest) >= 1.54
-%{perl_requires}
+%{?perl_requires}
 
 %description
 'Module::Build' is a system for building, testing, and installing Perl
@@ -94,17 +94,18 @@ In this case the actions run are 'build' (the default action), 'test', and
 You can run the 'help' action for a complete list of actions.
 
 %prep
-%autosetup  -n %{cpan_name}-%{cpan_version}
+%autosetup  -n %{cpan_name}-%{cpan_version} -p1
+
 
 %build
-perl Build.PL installdirs=vendor
-./Build build flags=%{?_smp_mflags}
+perl Build.PL --installdirs=vendor
+./Build build --flags=%{?_smp_mflags}
 
 %check
 ./Build test
 
 %install
-./Build install destdir=%{buildroot} create_packlist=0
+./Build install --destdir=%{buildroot} --create_packlist=0
 # MANUAL BEGIN
 # avoid conflict with Perl's own supplied version
 mv %{buildroot}/usr/bin/config_data %{buildroot}/usr/bin/config_data-%{version}
